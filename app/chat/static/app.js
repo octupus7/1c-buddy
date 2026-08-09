@@ -5,6 +5,7 @@
   const sendStopBtn = document.getElementById("send-stop-btn");
   const clearChatBtn = document.getElementById("clear-chat-btn");
   const settingsBtn = document.getElementById("settings-btn");
+  const themeBtn = document.getElementById("theme-btn");
   const searchBtn = document.getElementById("search-btn");
   const exportBtn = document.getElementById("export-btn");
   const searchContainer = document.getElementById("search-container");
@@ -102,6 +103,75 @@
       closeAllTokenTooltips();
     }
   });
+
+  // ---------------------------------------------------------------------
+  // Theme (dark / light)
+  //
+  // Dark is the default and the app deliberately does NOT follow the OS
+  // prefers-color-scheme: everyone was on dark before this feature existed,
+  // and silently flipping them to light on update would be a regression.
+  // Light is opt-in through the topbar button only.
+  //
+  // Kept in its own localStorage key rather than inside the chat settings
+  // blob: that blob is exported, imported and reset from the settings modal,
+  // and the modal itself is hidden when the server disables custom
+  // instructions and MCP.
+  // ---------------------------------------------------------------------
+  const THEME_STORAGE_KEY = "onec_chat_theme";
+  const DEFAULT_THEME = "dark";
+  const THEMES = ["dark", "light"];
+  const THEME_BUTTON_STATE = {
+    dark: { icon: "🌙", title: "Тёмная тема — переключить на светлую" },
+    light: { icon: "☀", title: "Светлая тема — переключить на тёмную" }
+  };
+  let currentTheme = DEFAULT_THEME;
+
+  // Mirrors the inline bootstrap script in index.html — keep the two in sync.
+  function loadTheme() {
+    try {
+      const stored = localStorage.getItem(THEME_STORAGE_KEY);
+      return THEMES.includes(stored) ? stored : DEFAULT_THEME;
+    } catch (e) {
+      return DEFAULT_THEME;
+    }
+  }
+
+  function applyTheme(theme, { rerenderDiagrams = true } = {}) {
+    currentTheme = THEMES.includes(theme) ? theme : DEFAULT_THEME;
+    document.documentElement.setAttribute("data-theme", currentTheme);
+
+    if (themeBtn) {
+      const state = THEME_BUTTON_STATE[currentTheme];
+      themeBtn.textContent = state.icon;
+      themeBtn.title = state.title;
+      themeBtn.setAttribute("aria-label", state.title);
+    }
+
+    // Mermaid bakes its palette into the rendered SVG, so it is the one thing
+    // that does not follow CSS variables on its own.
+    applyMermaidTheme(currentTheme);
+    if (rerenderDiagrams) {
+      rerenderMermaidDiagrams();
+    }
+  }
+
+  function initTheme() {
+    // The inline script in index.html has already painted the right theme;
+    // no diagrams exist yet, so skip the re-render on this first pass.
+    applyTheme(loadTheme(), { rerenderDiagrams: false });
+
+    if (themeBtn) {
+      themeBtn.addEventListener("click", () => {
+        const next = currentTheme === "dark" ? "light" : "dark";
+        try {
+          localStorage.setItem(THEME_STORAGE_KEY, next);
+        } catch (e) {
+          console.warn("Failed to persist theme:", e);
+        }
+        applyTheme(next);
+      });
+    }
+  }
 
   // Token accumulation for current conversation
   let totalInputTokens = 0;
@@ -714,30 +784,88 @@
   }
 
   // Mermaid initialization and rendering
-  function initMermaid() {
-    if (window.mermaid && !window.__mermaidInitialized) {
-      try {
-        window.mermaid.initialize({
-          startOnLoad: false,
-          theme: 'dark',
-          themeVariables: {
-            darkMode: true,
-            background: '#1e1e1e',
-            primaryColor: '#4a9eff',
-            primaryTextColor: '#e4e4e4',
-            primaryBorderColor: '#555',
-            lineColor: '#888',
-            secondaryColor: '#2d2d30',
-            tertiaryColor: '#252526'
-          },
-          suppressErrorRendering: true,
-          logLevel: 'fatal'
-        });
-        window.__mermaidInitialized = true;
-      } catch (e) {
-        console.error('Mermaid initialization error:', e);
+  //
+  // Mermaid resolves its palette at render time and writes the colours into
+  // the generated SVG, so switching the page theme means re-initializing it
+  // and re-rendering every diagram.
+  const MERMAID_THEMES = {
+    dark: {
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#1e1e1e',
+        primaryColor: '#4a9eff',
+        primaryTextColor: '#e4e4e4',
+        primaryBorderColor: '#555',
+        lineColor: '#888',
+        secondaryColor: '#2d2d30',
+        tertiaryColor: '#252526'
+      }
+    },
+    light: {
+      theme: 'default',
+      themeVariables: {
+        darkMode: false,
+        background: '#f7f8fa',
+        primaryColor: '#dbe6f8',
+        primaryTextColor: '#1f2328',
+        primaryBorderColor: '#8aa9d6',
+        lineColor: '#5b6572',
+        secondaryColor: '#eef1f5',
+        tertiaryColor: '#ffffff'
       }
     }
+  };
+
+  function applyMermaidTheme(theme) {
+    if (!window.mermaid) return;
+    const preset = MERMAID_THEMES[theme] || MERMAID_THEMES.dark;
+    if (window.__mermaidTheme === theme) return;
+    try {
+      window.mermaid.initialize({
+        startOnLoad: false,
+        theme: preset.theme,
+        themeVariables: preset.themeVariables,
+        suppressErrorRendering: true,
+        logLevel: 'fatal'
+      });
+      window.__mermaidTheme = theme;
+      window.__mermaidInitialized = true;
+    } catch (e) {
+      console.error('Mermaid initialization error:', e);
+    }
+  }
+
+  function initMermaid() {
+    if (window.mermaid && !window.__mermaidInitialized) {
+      applyMermaidTheme(currentTheme);
+    }
+  }
+
+  // Drop every rendered diagram back to its source and draw it again with the
+  // palette that is now active. The source is preserved in data-mermaid-code,
+  // so nothing is lost.
+  async function rerenderMermaidDiagrams() {
+    if (!window.mermaid) return;
+    const rendered = document.querySelectorAll('.mermaid[data-processed]');
+    if (!rendered.length) return;
+
+    rendered.forEach((div) => {
+      if (!div.getAttribute('data-mermaid-code')) return;
+      div.removeAttribute('data-processed');
+      div.removeAttribute('data-error');
+      div.removeAttribute('data-error-message');
+      div.innerHTML = '';
+      const wrapper = div.closest('.mermaid-wrapper');
+      const staleFixBtn = wrapper && wrapper.querySelector('.mermaid-fix-btn');
+      if (staleFixBtn) staleFixBtn.remove();
+    });
+
+    await renderMermaidDiagrams(document);
+
+    // A diagram shown fullscreen is a clone of the one in the chat, so refresh
+    // it from the freshly rendered original.
+    refreshMermaidModalContent();
   }
 
   // Sanitize and normalize Mermaid code to fix common syntax issues
@@ -834,7 +962,7 @@
           div.setAttribute('data-processed', 'true');
         } catch (err) {
           // Show error with original and sanitized code for debugging
-          div.innerHTML = '<pre style="color:#ff6b6b;padding:1rem;background:#2d1f1f;border-radius:4px;">Ошибка рендеринга диаграммы:\n' +
+          div.innerHTML = '<pre style="color:var(--err);padding:1rem;background:var(--err-bg);border-radius:4px;">Ошибка рендеринга диаграммы:\n' +
                           err.message + '\n\nПопробуйте упростить синтаксис диаграммы.</pre>';
           div.setAttribute('data-processed', 'true');
           div.setAttribute('data-error', 'true');
@@ -852,12 +980,13 @@
               fixBtn.title = 'Исправить диаграмму';
               fixBtn.setAttribute('aria-label', 'Исправить диаграмму');
               fixBtn.setAttribute('data-fix-mermaid', '');
-              fixBtn.style.cssText = 'padding:4px 8px;border-radius:6px;' +
-                                     'border:1px solid rgba(255,255,255,0.18);background:rgba(255,165,0,0.15);' +
-                                     'color:inherit;cursor:pointer;font-size:12px;line-height:1;opacity:.85;';
               fixBtn.textContent = '🔧';
 
-              // Insert at the beginning of controls
+              // Insert at the beginning of controls. A previous render may have
+              // left one behind (e.g. after a theme switch) — replace it rather
+              // than stacking duplicates.
+              const staleFixBtn = controlsDiv.querySelector('.mermaid-fix-btn');
+              if (staleFixBtn) staleFixBtn.remove();
               controlsDiv.insertBefore(fixBtn, controlsDiv.firstChild);
             }
           }
@@ -1654,6 +1783,9 @@
   }
 
   // Initialize UI state
+  // Theme first: renderHistory() below draws mermaid diagrams, and they must be
+  // rendered with the palette that is actually going to be shown.
+  initTheme();
   loadChatCapabilities().then(() => {
     applySettingsCapabilityState();
   });
@@ -3217,6 +3349,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // Mermaid fullscreen modal handler
   let mermaidModal = null;
   let modalZoom = 1;
+  // The .mermaid element the fullscreen view was opened from, so its SVG can be
+  // pulled in again after a re-render.
+  let fullscreenMermaidSource = null;
+
+  function refreshMermaidModalContent() {
+    if (!mermaidModal || mermaidModal.element.style.display === 'none') return;
+    if (!fullscreenMermaidSource || !fullscreenMermaidSource.isConnected) return;
+    mermaidModal.show(fullscreenMermaidSource.innerHTML);
+  }
 
   function createMermaidModal() {
     if (mermaidModal) return mermaidModal;
@@ -3231,7 +3372,7 @@ document.addEventListener("DOMContentLoaded", () => {
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.95);
+      background: var(--modal-scrim);
       z-index: 10000;
       overflow: auto;
     `;
@@ -3289,9 +3430,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const buttonStyle = `
       padding: 8px 16px;
       border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
+      border: 1px solid rgba(var(--on-surface-rgb), 0.3);
+      background: var(--hover);
+      color: var(--text);
       cursor: pointer;
       font-size: 14px;
       font-weight: 500;
@@ -3448,6 +3589,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Listen for fullscreen event from markdown.js
   document.addEventListener('mermaid-fullscreen', (e) => {
     const modal = createMermaidModal();
+    fullscreenMermaidSource = e.detail.source || null;
     modal.show(e.detail.svg);
   });
 });

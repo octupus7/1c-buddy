@@ -11,6 +11,13 @@ class ConversationRequest(BaseModel):
     programming_language: str = ""
     skill_name: str = "custom"
     ui_language: str = "russian"
+    user_instruct: Dict[str, Any] = Field(
+        default_factory=lambda: {
+            "common_rules": None,
+            "projects_rules": {},
+            "workspace_rules": None,
+        }
+    )
 
 
 class ConversationResponse(BaseModel):
@@ -41,7 +48,13 @@ class MessageRequest(BaseModel):
         return cls(
             content=MessageContentOuter(
                 content=MessageContentInner(instruction=instruction),
-                # tools не передаём явно — возьмётся дефолт []
+                tools=[
+                    {
+                        "name": "NoCall",
+                        "description": "",
+                        "parameters": {"type": "object", "properties": {}},
+                    }
+                ],
             ),
             parent_uuid=parent_uuid,
             role="user"

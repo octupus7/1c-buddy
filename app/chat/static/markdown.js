@@ -289,17 +289,11 @@
       const html =
         '<div class="mermaid-wrapper" style="position:relative;" data-zoom="1">' +
           '<div class="mermaid-controls" style="position:absolute;top:8px;right:8px;display:flex;gap:4px;z-index:1;">' +
-            '<button type="button" class="mermaid-fullscreen-btn" title="Развернуть на весь экран" aria-label="Развернуть" data-fullscreen ' +
-              'style="padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.18);' +
-                     'background:rgba(255,255,255,0.06);color:inherit;cursor:pointer;font-size:14px;line-height:1;opacity:.85;">⛶</button>' +
+            '<button type="button" class="mermaid-fullscreen-btn" title="Развернуть на весь экран" aria-label="Развернуть" data-fullscreen>⛶</button>' +
           '</div>' +
           '<div class="mermaid-controls-bottom" style="position:absolute;bottom:8px;right:8px;z-index:1;display:flex;gap:4px;">' +
-            '<button type="button" class="mermaid-save-btn" title="Сохранить как PNG" aria-label="Сохранить" data-save-mermaid ' +
-              'style="padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.18);' +
-                     'background:rgba(255,255,255,0.06);color:inherit;cursor:pointer;font-size:12px;line-height:1;opacity:.85;">🖫</button>' +
-            '<button type="button" class="mermaid-copy-btn" title="Скопировать" aria-label="Скопировать" data-copy-mermaid ' +
-              'style="padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.18);' +
-                     'background:rgba(255,255,255,0.06);color:inherit;cursor:pointer;font-size:12px;line-height:1;opacity:.85;">⧉</button>' +
+            '<button type="button" class="mermaid-save-btn" title="Сохранить как PNG" aria-label="Сохранить" data-save-mermaid>🖫</button>' +
+            '<button type="button" class="mermaid-copy-btn" title="Скопировать" aria-label="Скопировать" data-copy-mermaid>⧉</button>' +
           '</div>' +
           '<div class="mermaid-content" style="transform-origin:center center;transition:transform 0.2s ease;width:100%;">' +
             '<div class="mermaid" data-mermaid-code="' + safeCode.replace(/"/g, '&quot;') + '"></div>' +
@@ -315,13 +309,11 @@
     md = md.replace(/```([\w+-]*)\r?\n([\s\S]*?)```/g, function (_m, lang, code) {
       const cls = lang ? ' class="lang-' + String(lang).toLowerCase() + '"' : "";
       // Inject a copy-to-clipboard button into fenced code blocks.
-      // Use inline styles to avoid external CSS dependency.
+      // Its appearance is defined by .code-copy-btn in styles.css so that it
+      // follows the active theme.
       const html =
         '<pre class="code-block" style="position:relative;padding-right:42px;">' +
-          '<button type="button" class="code-copy-btn" title="Скопировать" aria-label="Скопировать" data-copy-code ' +
-            'style="position:absolute;bottom:8px;right:8px;padding:4px 8px;border-radius:6px;' +
-                   'border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.06);' +
-                   'color:inherit;cursor:pointer;font-size:12px;line-height:1;opacity:.85;z-index:1;">⧉</button>' +
+          '<button type="button" class="code-copy-btn" title="Скопировать" aria-label="Скопировать" data-copy-code>⧉</button>' +
           '<code' + cls + '>' + escapeHTML(code) + '</code>' +
         '</pre>';
       const token = "§§CODEBLOCK" + codeBlocks.length + "§§";
@@ -596,9 +588,11 @@
         const mermaidCode = mermaidDiv ? mermaidDiv.getAttribute("data-mermaid-code") : "";
         if (!mermaidCode) return;
 
-        // Trigger fullscreen event (will be handled in app.js)
+        // Trigger fullscreen event (will be handled in app.js).
+        // `source` lets app.js refresh the fullscreen copy when the diagram is
+        // re-rendered, e.g. after a theme switch.
         const event = new CustomEvent("mermaid-fullscreen", {
-          detail: { code: mermaidCode, svg: mermaidDiv.innerHTML }
+          detail: { code: mermaidCode, svg: mermaidDiv.innerHTML, source: mermaidDiv }
         });
         document.dispatchEvent(event);
         return;

@@ -52,14 +52,18 @@ class OneCApiClient:
             ),
             headers={
                 "Accept": "*/*",
-                "Accept-Charset": "utf-8",
-                "Accept-Encoding": "gzip, deflate, br",
-                "Accept-Language": "ru-ru,en-us;q=0.8,en;q=0.7",
+                "Accept-Charset": "ISO-8859-1,utf-8;q=0.7,*;q=0.7",
+                "Accept-Encoding": "gzip, inflate",
+                "Accept-Language": "en-us;q=0.8,en;q=0.7",
                 "Authorization": self.settings.ONEC_AI_TOKEN,
-                "Content-Type": "application/json; charset=utf-8",
+                "Content-Type": "application/json",
                 "Origin": self.settings.ONEC_AI_BASE_URL,
                 "Referer": f"{self.settings.ONEC_AI_BASE_URL}/chat/",
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/620.1 (KHTML, like Gecko) JavaFX/22 Safari/620.1",
+                "Sec-Fetch-Dest": "empty",
+                "Sec-Fetch-Mode": "cors",
+                "Sec-Fetch-Site": "same-origin",
+                "Session-Id": "",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/620.1 (KHTML, like Gecko) JavaFX/17 Version/18.4 Safari/620.1",
             },
         )
 
@@ -177,7 +181,7 @@ class OneCApiClient:
             payload = request_data.model_dump()
             if extra_tools:
                 payload.setdefault("content", {}).setdefault("tools", [])
-                payload["content"]["tools"] = list(extra_tools)
+                payload["content"]["tools"].extend(extra_tools)
 
             # last_sent_tool_calls хранится МЕЖДУ итерациями while — для per-item fallback
             last_sent_tool_calls: list = []

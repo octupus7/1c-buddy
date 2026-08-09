@@ -4,7 +4,23 @@
     <meta charset="utf-8" />
     <title>Чат с 1С:Напарник</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
     <link rel="icon" type="image/png" href="/chat/static/buddy_small.png">
+    <!--
+      Apply the stored theme before the stylesheet is parsed, otherwise a
+      light-theme user gets a dark flash on every page load. Dark is the
+      default and the OS preference is deliberately ignored — light is opt-in
+      only. Keep this in sync with THEME_STORAGE_KEY / loadTheme() in app.js.
+    -->
+    <script>
+      (function () {
+        var theme = "dark";
+        try {
+          if (localStorage.getItem("onec_chat_theme") === "light") theme = "light";
+        } catch (e) { /* private mode: stay on the default */ }
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
     <link href="/chat/static/styles.css" rel="stylesheet" />
   </head>
   <body>
@@ -36,6 +52,7 @@
             <h1>Чат с 1С:Напарник</h1>
           </div>
           <div class="controls">
+            <button id="theme-btn" class="theme-btn" type="button" title="Тёмная тема — переключить на светлую" aria-label="Переключить тему оформления">🌙</button>
             <button id="settings-btn" title="Настройки" hidden>⚙</button>
             <button id="search-btn" title="Поиск по истории">🔍</button>
             <button id="export-btn" title="Экспорт истории">📥</button>

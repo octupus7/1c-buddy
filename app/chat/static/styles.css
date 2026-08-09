@@ -1,5 +1,21 @@
+/* ============================================================
+   Design tokens
+   ------------------------------------------------------------
+   :root holds the dark theme, which is also the default;
+   :root[data-theme="light"] below redefines only the colours.
+   `data-theme` is always set by the inline script in index.html.
+   The OS colour scheme is intentionally not consulted — light is
+   opt-in via the topbar button — so there is no
+   prefers-color-scheme block anywhere in this file.
+
+   Most translucent colours are expressed as rgba(var(--*-rgb), a)
+   so a single triplet flips a whole family between themes.
+   ============================================================ */
+
 :root {
-  /* Dark theme (default) */
+  color-scheme: dark;
+
+  /* --- surfaces & text --- */
   --bg: #0f1216;
   --panel: #141922;
   --panel-2: #1b2230;
@@ -14,13 +30,206 @@
   --user: #2d3950;
   --assistant: #1f2a3a;
 
+  /* --- colour families used for translucent tints --- */
+  --on-surface-rgb: 255, 255, 255;   /* overlays: borders, hovers, insets */
+  --shadow-rgb: 0, 0, 0;             /* shadows and scrims */
+  --accent-rgb: 75, 163, 255;
+  --err-rgb: 255, 107, 107;
+  --ok-rgb: 40, 167, 69;
+  --warn-rgb: 240, 173, 78;
+
+  /* --- semantic aliases derived from the overlay family --- */
+  --border: rgba(var(--on-surface-rgb), 0.08);
+  --border-soft: rgba(var(--on-surface-rgb), 0.06);
+  --border-medium: rgba(var(--on-surface-rgb), 0.12);
+  --border-strong: rgba(var(--on-surface-rgb), 0.15);
+  --hover: rgba(var(--on-surface-rgb), 0.1);
+  --surface-inset: rgba(var(--on-surface-rgb), 0.04);
+  --scrollbar-thumb: rgba(var(--on-surface-rgb), 0.12);
+  --code-bg: rgba(var(--on-surface-rgb), 0.04);
+  --code-border: transparent;
+  --code-inline-bg: rgba(var(--on-surface-rgb), 0.12);
+  --code-inline-fg: #dcdcaa;
+
+  /* Top bevel highlight on raised buttons — stays light in both themes */
+  --bevel-hi: rgba(255, 255, 255, 0.06);
+  --bevel-hi-strong: rgba(255, 255, 255, 0.1);
+
+  /* --- foreground colours on tinted button backgrounds --- */
+  --fg-on-ok: #77e093;
+  --fg-on-ok-strong: #9cffb6;
+  --fg-on-accent: #8fc7ff;
+  --fg-on-accent-strong: #b9ddff;
+  --fg-on-warn: #ffd28a;
+  --fg-on-warn-strong: #ffe0a8;
+  --fg-on-err: #ff9b9b;
+  --fg-on-err-strong: #ffc1c1;
+  --fg-on-err-soft: #ffb3b3;
+  --err-bg: #2d1f1f;
+
+  /* --- links --- */
+  --link: #8fc6ff;
+  --link-hover: #b6ddff;
+  --link-underline: rgba(143, 198, 255, 0.6);
+
+  /* --- tool-call blocks --- */
+  --tool-meta-fg: rgba(170, 178, 192, 0.85);
+  --tool-name-fg: rgba(100, 180, 255, 0.85);
+  --tool-args-fg: rgba(170, 178, 192, 0.75);
+  --tool-result-fg: rgba(150, 210, 150, 0.85);
+  --tool-followup-fg: rgba(214, 222, 235, 0.9);
+  --tool-details-fg: rgba(170, 178, 192, 0.7);
+
+  /* --- search highlighting --- */
+  --chat-hl-bg: rgba(255, 215, 0, 0.3);
+  --chat-hl-current-bg: rgba(255, 165, 0, 0.55);
+  --hl-current-ring: rgba(255, 165, 0, 0.8);
+  --search-hl-bg: rgba(255, 255, 0, 0.3);
+  --search-hl-current-bg: rgba(255, 165, 0, 0.5);
+
+  /* --- file viewer --- */
+  /* Equivalent to the former var(--muted) at opacity .45 over --bg */
+  --gutter-fg: #555a62;
+
+  /* --- mermaid --- */
+  --mermaid-bg: #1e1e1e;
+  --mermaid-edge-label-bg: #252526;
+  --mermaid-edge-label-fg: #e4e4e4;
+  --modal-scrim: rgba(0, 0, 0, 0.95);
+
+  /* --- syntax highlighting (BSL + XML), shared by chat and file viewer --- */
+  --syn-keyword: #ff6b9d;
+  --syn-type: #4ec9b0;
+  --syn-builtin: #dcdcaa;
+  --syn-string: #ce9178;
+  --syn-comment: #6a9955;
+  --syn-number: #b5cea8;
+  --syn-attr: #c586c0;
+  --syn-preproc: #9b9b9b;
+  --syn-op: #d4d4d4;
+  --syn-xml-decl: #9b9b9b;
+  --syn-xml-pi: #9b9b9b;
+  --syn-xml-tag: #4ec9b0;
+  --syn-xml-attr: #9cdcfe;
+  --syn-xml-val: #ce9178;
+  --syn-xml-entity: #dcdcaa;
+  --syn-xml-cdata: #ce9178;
+  --syn-xml-cdata-bg: rgba(206, 145, 120, 0.1);
+  --syn-xml-doctype: #c586c0;
+
+  /* --- geometry (theme independent) --- */
   --radius: 10px;
   --gap: 12px;
   --pad: 14px;
-  --shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  --shadow: 0 6px 20px rgba(var(--shadow-rgb), 0.25);
 
   /* Max container width for centered layout */
   --container-max: 1200px;
+}
+
+/* ============================================================
+   Light theme
+   ============================================================ */
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #ffffff;
+  --panel: #f4f6f8;
+  --panel-2: #eaeef3;
+  --text: #1f2328;
+  --muted: #5b6572;
+  --accent: #1a73e8;
+  --accent-2: #0b57d0;
+  --ok: #107c10;
+  --warn: #a15c00;
+  --err: #c5221f;
+
+  --user: #dbe6f8;
+  --assistant: #f1f3f6;
+
+  /* Slate rather than pure black: softer borders and shadows on white */
+  --on-surface-rgb: 15, 23, 42;
+  --shadow-rgb: 15, 23, 42;
+  --accent-rgb: 26, 115, 232;
+  --err-rgb: 197, 34, 31;
+  --ok-rgb: 16, 124, 16;
+  --warn-rgb: 161, 92, 0;
+
+  /* White code canvas, like the VS Code / EDT editor. This alone lifts every
+     syntax colour from ~4.6:1 to 5.5:1+ without touching the palette. */
+  --code-bg: #ffffff;
+  --code-border: rgba(var(--on-surface-rgb), 0.14);
+  --code-inline-fg: #a31515;
+
+  --bevel-hi: rgba(255, 255, 255, 0.9);
+  --bevel-hi-strong: #ffffff;
+
+  /* Tinted buttons keep a pale background here, so the text must go dark */
+  --fg-on-ok: #0b6a0b;
+  --fg-on-ok-strong: #085308;
+  --fg-on-accent: #0b57d0;
+  --fg-on-accent-strong: #06409c;
+  --fg-on-warn: #8a4f00;
+  --fg-on-warn-strong: #6b3d00;
+  --fg-on-err: #a91b18;
+  --fg-on-err-strong: #8a1512;
+  --fg-on-err-soft: #a91b18;
+  --err-bg: #fdecec;
+
+  --link: #0b57d0;
+  --link-hover: #083b91;
+  --link-underline: rgba(11, 87, 208, 0.45);
+
+  --tool-meta-fg: #5b6572;
+  --tool-name-fg: #0b57d0;
+  --tool-args-fg: #5b6572;
+  --tool-result-fg: #1f6f2e;
+  --tool-followup-fg: #2b323b;
+  --tool-details-fg: #6b7480;
+
+  /* Yellow at 0.3 is invisible on white — these need their own values */
+  --chat-hl-bg: rgba(255, 213, 0, 0.55);
+  --chat-hl-current-bg: rgba(255, 140, 0, 0.55);
+  --hl-current-ring: rgba(214, 110, 0, 0.85);
+  --search-hl-bg: rgba(255, 213, 0, 0.55);
+  --search-hl-current-bg: rgba(255, 140, 0, 0.55);
+
+  --gutter-fg: #8a939e;
+
+  --mermaid-bg: #f7f8fa;
+  --mermaid-edge-label-bg: #ffffff;
+  --mermaid-edge-label-fg: #1f2328;
+  --modal-scrim: rgba(248, 249, 251, 0.97);
+
+  /* VS Code Light+ palette — the one 1C developers know from EDT / VS Code,
+     with two deliberate departures towards the Configurator:
+       - keywords are red, not Light+ blue (darkened from the Configurator's
+         pure #ff0000, which only reaches 4.0:1 on white);
+       - preprocessor instructions are brown, not grey — grey read as merely
+         dimmed text rather than as a category of its own.
+     The brown is kept darker than --syn-builtin so #Если does not blend into
+     the ochre of nearby function calls. */
+  --syn-keyword: #d40000;
+  --syn-type: #227188;
+  --syn-builtin: #8a5a00;
+  --syn-string: #a31515;
+  --syn-comment: #007a00;
+  --syn-number: #08774e;
+  --syn-attr: #af00db;
+  --syn-preproc: #7b3f00;
+  --syn-op: #24292f;
+  --syn-xml-decl: #686868;
+  --syn-xml-pi: #686868;
+  --syn-xml-tag: #800000;
+  --syn-xml-attr: #d30000;
+  --syn-xml-val: #0451a5;
+  --syn-xml-entity: #8a5a00;
+  --syn-xml-cdata: #a31515;
+  --syn-xml-cdata-bg: rgba(163, 21, 21, 0.08);
+  --syn-xml-doctype: #af00db;
+
+  --shadow: 0 6px 20px rgba(var(--shadow-rgb), 0.12);
 }
 
 
@@ -52,7 +261,7 @@ body {
 .sidebar {
   width: 280px;
   background: var(--panel);
-  border-right: 1px solid rgba(255,255,255,0.06);
+  border-right: 1px solid var(--border-soft);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -69,7 +278,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--border-soft);
   gap: 8px;
 }
 
@@ -85,7 +294,7 @@ body {
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
   background: var(--panel-2);
   color: var(--text);
   border-radius: 6px;
@@ -135,12 +344,12 @@ body {
 }
 
 .conversation-item:hover {
-  background: rgba(75, 163, 255, 0.1);
-  border-color: rgba(75, 163, 255, 0.3);
+  background: rgba(var(--accent-rgb), 0.1);
+  border-color: rgba(var(--accent-rgb), 0.3);
 }
 
 .conversation-item.active {
-  background: rgba(75, 163, 255, 0.15);
+  background: rgba(var(--accent-rgb), 0.15);
   border-color: var(--accent);
 }
 
@@ -209,22 +418,22 @@ body {
 }
 
 .conversation-delete:hover {
-  background: rgba(255, 107, 107, 0.2);
+  background: rgba(var(--err-rgb), 0.2);
   color: var(--err);
 }
 
 /* Sidebar footer */
 .sidebar-footer {
   padding: 12px;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid var(--border-soft);
   background: var(--panel);
 }
 
 .clear-all-btn {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid rgba(255, 107, 107, 0.3);
-  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(var(--err-rgb), 0.3);
+  background: rgba(var(--err-rgb), 0.1);
   color: var(--err);
   border-radius: 6px;
   cursor: pointer;
@@ -238,7 +447,7 @@ body {
 }
 
 .clear-all-btn:hover {
-  background: rgba(255, 107, 107, 0.2);
+  background: rgba(var(--err-rgb), 0.2);
   border-color: var(--err);
   transform: translateY(-1px);
 }
@@ -261,7 +470,7 @@ body {
   width: 32px;
   height: 32px;
   padding: 0;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
   background: var(--panel-2);
   color: var(--text);
   border-radius: 6px;
@@ -283,7 +492,7 @@ body {
   width: 32px;
   height: 32px;
   padding: 0;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
   background: var(--panel-2);
   color: var(--text);
   border-radius: 6px;
@@ -314,7 +523,7 @@ body {
   gap: 16px;
   padding: 10px 14px;
   background: var(--panel);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--border-soft);
   position: relative;
 }
 
@@ -351,14 +560,26 @@ body {
   height: 32px;
   padding: 6px 12px;
   border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
   background: var(--panel-2);
   color: var(--text);
   cursor: pointer;
 }
 
 .topbar button:hover {
-  border-color: rgba(75,163,255,0.5);
+  border-color: rgba(var(--accent-rgb), 0.5);
+}
+
+/* Theme switcher: fixed width so swapping the icon (🌙 / ☀) does not
+   shift the neighbouring buttons. */
+.theme-btn {
+  width: 36px;
+  padding: 6px 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  line-height: 1;
 }
 
 /* Settings modal */
@@ -366,7 +587,7 @@ body {
   position: fixed;
   inset: 0;
   z-index: 10000;
-  background: rgba(0, 0, 0, 0.58);
+  background: rgba(var(--shadow-rgb), 0.58);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -381,7 +602,7 @@ body {
   width: min(920px, 100%);
   max-height: min(760px, calc(100vh - 48px));
   background: var(--panel);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid var(--hover);
   border-radius: 8px;
   box-shadow: var(--shadow);
   display: flex;
@@ -394,7 +615,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 14px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid var(--border);
 }
 
 .settings-header h2 {
@@ -405,7 +626,7 @@ body {
 .settings-icon-btn {
   width: 32px;
   height: 32px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid var(--hover);
   background: var(--panel-2);
   color: var(--text);
   border-radius: 6px;
@@ -417,11 +638,11 @@ body {
   gap: 4px;
   padding: 8px 12px 0;
   background: var(--panel);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid var(--border);
 }
 
 .settings-tab {
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
   background: var(--panel-2);
   color: var(--muted);
   padding: 8px 12px;
@@ -432,7 +653,7 @@ body {
 .settings-tab.active {
   color: var(--text);
   border-color: var(--accent);
-  background: rgba(75, 163, 255, 0.12);
+  background: rgba(var(--accent-rgb), 0.12);
 }
 
 .settings-body {
@@ -442,14 +663,14 @@ body {
 
 .settings-footer {
   padding: 12px 16px;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  background: rgba(0,0,0,0.12);
+  border-top: 1px solid var(--hover);
+  background: rgba(var(--shadow-rgb), 0.12);
 }
 
 .settings-save-feedback {
   min-height: 18px;
   margin-top: 8px;
-  color: #77e093;
+  color: var(--fg-on-ok);
   font-size: 12px;
   opacity: 0;
   transition: opacity 0.15s ease;
@@ -480,7 +701,7 @@ body {
 .mcp-server-head input[type="text"],
 .mcp-server-head input[type="url"] {
   width: 100%;
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid var(--border-medium);
   background: var(--panel-2);
   color: var(--text);
   border-radius: 6px;
@@ -489,16 +710,16 @@ body {
 }
 
 .settings-input-error {
-  border-color: rgba(255, 107, 107, 0.75) !important;
-  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.14);
+  border-color: rgba(var(--err-rgb), 0.75) !important;
+  box-shadow: 0 0 0 2px rgba(var(--err-rgb), 0.14);
 }
 
 .settings-inline-error {
   margin: -6px 0 12px;
   padding: 8px 10px;
-  border: 1px solid rgba(255, 107, 107, 0.45);
-  background: rgba(255, 107, 107, 0.1);
-  color: #ffb3b3;
+  border: 1px solid rgba(var(--err-rgb), 0.45);
+  background: rgba(var(--err-rgb), 0.1);
+  color: var(--fg-on-err-soft);
   border-radius: 6px;
   font-size: 12px;
 }
@@ -518,9 +739,9 @@ body {
   width: 22px;
   height: 22px;
   padding: 0;
-  border: 1px solid rgba(255, 107, 107, 0.35);
-  background: rgba(255, 107, 107, 0.12);
-  color: #ffc1c1;
+  border: 1px solid rgba(var(--err-rgb), 0.35);
+  background: rgba(var(--err-rgb), 0.12);
+  color: var(--fg-on-err-strong);
   border-radius: 5px;
   cursor: pointer;
   flex: 0 0 auto;
@@ -528,7 +749,7 @@ body {
 }
 
 .settings-inline-error-close:hover {
-  background: rgba(255, 107, 107, 0.22);
+  background: rgba(var(--err-rgb), 0.22);
 }
 
 .settings-textarea {
@@ -546,7 +767,7 @@ body {
 .settings-confirm-actions button,
 .mcp-server-form button,
 .mcp-server-card button {
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid var(--border-medium);
   background: var(--panel-2);
   color: var(--text);
   border-radius: 6px;
@@ -555,7 +776,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 1px 2px rgba(0,0,0,0.25);
+  box-shadow: 0 1px 0 var(--bevel-hi) inset, 0 1px 2px rgba(var(--shadow-rgb), 0.25);
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.08s ease, box-shadow 0.15s ease;
 }
 
@@ -565,7 +786,7 @@ body {
 .mcp-server-card button:hover {
   border-color: var(--accent);
   transform: translateY(-1px);
-  box-shadow: 0 1px 0 rgba(255,255,255,0.1) inset, 0 4px 10px rgba(0,0,0,0.25);
+  box-shadow: 0 1px 0 var(--bevel-hi-strong) inset, 0 4px 10px rgba(var(--shadow-rgb), 0.25);
 }
 
 .settings-actions button:active,
@@ -573,7 +794,7 @@ body {
 .mcp-server-form button:active,
 .mcp-server-card button:active {
   transform: translateY(0);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.35) inset;
+  box-shadow: 0 1px 3px rgba(var(--shadow-rgb), 0.35) inset;
 }
 
 .settings-actions button:focus-visible,
@@ -582,7 +803,7 @@ body {
 .mcp-server-card button:focus-visible,
 .settings-tab:focus-visible,
 .settings-icon-btn:focus-visible {
-  outline: 2px solid rgba(75, 163, 255, 0.75);
+  outline: 2px solid rgba(var(--accent-rgb), 0.75);
   outline-offset: 2px;
 }
 
@@ -600,44 +821,44 @@ body {
 .settings-confirm-actions button.settings-action-primary,
 .mcp-server-form button.settings-action-primary,
 .mcp-server-card button.settings-action-primary {
-  border-color: rgba(40, 167, 69, 0.55);
-  background: rgba(40, 167, 69, 0.16);
-  color: #77e093;
+  border-color: rgba(var(--ok-rgb), 0.55);
+  background: rgba(var(--ok-rgb), 0.16);
+  color: var(--fg-on-ok);
 }
 
 .settings-actions button.settings-action-info,
 .settings-confirm-actions button.settings-action-info,
 .mcp-server-form button.settings-action-info,
 .mcp-server-card button.settings-action-info {
-  border-color: rgba(75, 163, 255, 0.55);
-  background: rgba(75, 163, 255, 0.16);
-  color: #8fc7ff;
+  border-color: rgba(var(--accent-rgb), 0.55);
+  background: rgba(var(--accent-rgb), 0.16);
+  color: var(--fg-on-accent);
 }
 
 .settings-actions button.settings-action-warn,
 .settings-confirm-actions button.settings-action-warn,
 .mcp-server-form button.settings-action-warn,
 .mcp-server-card button.settings-action-warn {
-  border-color: rgba(240, 173, 78, 0.55);
-  background: rgba(240, 173, 78, 0.14);
-  color: #ffd28a;
+  border-color: rgba(var(--warn-rgb), 0.55);
+  background: rgba(var(--warn-rgb), 0.14);
+  color: var(--fg-on-warn);
 }
 
 .settings-actions button.settings-action-danger,
 .settings-confirm-actions button.settings-action-danger,
 .mcp-server-form button.settings-action-danger,
 .mcp-server-card button.settings-action-danger {
-  border-color: rgba(255, 107, 107, 0.55);
-  background: rgba(255, 107, 107, 0.14);
-  color: #ff9b9b;
+  border-color: rgba(var(--err-rgb), 0.55);
+  background: rgba(var(--err-rgb), 0.14);
+  color: var(--fg-on-err);
 }
 
 .settings-actions button.settings-action-neutral,
 .settings-confirm-actions button.settings-action-neutral,
 .mcp-server-form button.settings-action-neutral,
 .mcp-server-card button.settings-action-neutral {
-  border-color: rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.08);
+  border-color: rgba(var(--on-surface-rgb), 0.18);
+  background: var(--border);
   color: var(--text);
 }
 
@@ -645,35 +866,35 @@ body {
 .settings-confirm-actions button.settings-action-primary:hover,
 .mcp-server-form button.settings-action-primary:hover,
 .mcp-server-card button.settings-action-primary:hover {
-  background: rgba(40, 167, 69, 0.24);
+  background: rgba(var(--ok-rgb), 0.24);
 }
 
 .settings-actions button.settings-action-info:hover,
 .settings-confirm-actions button.settings-action-info:hover,
 .mcp-server-form button.settings-action-info:hover,
 .mcp-server-card button.settings-action-info:hover {
-  background: rgba(75, 163, 255, 0.24);
+  background: rgba(var(--accent-rgb), 0.24);
 }
 
 .settings-actions button.settings-action-warn:hover,
 .settings-confirm-actions button.settings-action-warn:hover,
 .mcp-server-form button.settings-action-warn:hover,
 .mcp-server-card button.settings-action-warn:hover {
-  background: rgba(240, 173, 78, 0.22);
+  background: rgba(var(--warn-rgb), 0.22);
 }
 
 .settings-actions button.settings-action-danger:hover,
 .settings-confirm-actions button.settings-action-danger:hover,
 .mcp-server-form button.settings-action-danger:hover,
 .mcp-server-card button.settings-action-danger:hover {
-  background: rgba(255, 107, 107, 0.22);
+  background: rgba(var(--err-rgb), 0.22);
 }
 
 .settings-actions button.settings-action-neutral:hover,
 .settings-confirm-actions button.settings-action-neutral:hover,
 .mcp-server-form button.settings-action-neutral:hover,
 .mcp-server-card button.settings-action-neutral:hover {
-  background: rgba(255,255,255,0.13);
+  background: rgba(var(--on-surface-rgb), 0.13);
 }
 
 .settings-btn-icon {
@@ -685,31 +906,31 @@ body {
   border-radius: 999px;
   font-weight: 700;
   line-height: 1;
-  background: rgba(255,255,255,0.08);
+  background: var(--border);
 }
 
 .settings-action-primary .settings-btn-icon {
-  background: rgba(40, 167, 69, 0.3);
-  color: #9cffb6;
+  background: rgba(var(--ok-rgb), 0.3);
+  color: var(--fg-on-ok-strong);
 }
 
 .settings-action-info .settings-btn-icon {
-  background: rgba(75, 163, 255, 0.3);
-  color: #b9ddff;
+  background: rgba(var(--accent-rgb), 0.3);
+  color: var(--fg-on-accent-strong);
 }
 
 .settings-action-warn .settings-btn-icon {
-  background: rgba(240, 173, 78, 0.3);
-  color: #ffe0a8;
+  background: rgba(var(--warn-rgb), 0.3);
+  color: var(--fg-on-warn-strong);
 }
 
 .settings-action-danger .settings-btn-icon {
-  background: rgba(255, 107, 107, 0.3);
-  color: #ffc1c1;
+  background: rgba(var(--err-rgb), 0.3);
+  color: var(--fg-on-err-strong);
 }
 
 .settings-action-neutral .settings-btn-icon {
-  background: rgba(255,255,255,0.12);
+  background: var(--border-medium);
   color: var(--text);
 }
 
@@ -720,14 +941,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,0.62);
+  background: rgba(var(--shadow-rgb), 0.62);
   padding: 20px;
 }
 
 .settings-confirm-dialog {
   width: min(420px, 100%);
   background: var(--panel);
-  border: 1px solid rgba(255,255,255,0.14);
+  border: 1px solid rgba(var(--on-surface-rgb), 0.14);
   border-radius: 8px;
   box-shadow: var(--shadow);
   padding: 16px;
@@ -755,10 +976,10 @@ body {
 .settings-disabled {
   padding: 10px;
   margin-bottom: 12px;
-  border: 1px solid rgba(240, 173, 78, 0.35);
+  border: 1px solid rgba(var(--warn-rgb), 0.35);
   color: var(--warn);
   border-radius: 6px;
-  background: rgba(240, 173, 78, 0.08);
+  background: rgba(var(--warn-rgb), 0.08);
 }
 
 .mcp-server-form {
@@ -775,7 +996,7 @@ body {
 }
 
 .mcp-server-card {
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
   background: var(--panel-2);
   border-radius: 8px;
   padding: 10px;
@@ -804,7 +1025,7 @@ body {
   font-weight: 700;
   line-height: 1;
   color: var(--text);
-  background: rgba(255,255,255,0.07);
+  background: rgba(var(--on-surface-rgb), 0.07);
 }
 
 .mcp-server-card button.mcp-tools-toggle:disabled {
@@ -815,7 +1036,7 @@ body {
 }
 
 .mcp-server-card button.mcp-tools-toggle:not(:disabled):hover {
-  background: rgba(75, 163, 255, 0.18);
+  background: rgba(var(--accent-rgb), 0.18);
 }
 
 .mcp-server-head input[type="text"],
@@ -944,7 +1165,7 @@ main > .composer {
 .msg .bubble .content a {
   color: var(--accent);
   text-decoration: none;
-  border-bottom: 1px dotted rgba(75,163,255,0.6);
+  border-bottom: 1px dotted rgba(var(--accent-rgb), 0.6);
 }
 .msg .bubble .content a:hover {
   text-decoration: underline;
@@ -982,10 +1203,10 @@ main > .composer {
 
 /* Inline code (not inside pre) */
 .msg .bubble code {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--code-inline-bg);
   padding: 2px 6px;
   border-radius: 3px;
-  color: #dcdcaa;
+  color: var(--code-inline-fg);
   font-size: 0.95em;
 }
 
@@ -1001,7 +1222,10 @@ main > .composer {
 }
 
 .msg .bubble pre {
-  background: rgba(255,255,255,0.04);
+  background: var(--code-bg);
+  /* inset rather than a real border: outlines the block on the light theme's
+     white code surface without shifting layout on the dark one */
+  box-shadow: inset 0 0 0 1px var(--code-border);
   padding: 10px;
   border-radius: 8px;
   overflow-x: auto;
@@ -1020,137 +1244,95 @@ main > .composer {
   margin-bottom: 0;
 }
 
-/* BSL syntax highlighting tokens */
-.msg .bubble code .tok-k {        /* keywords */
-  color: #ff6b9d;
+/* ========================================
+   Syntax highlighting tokens (BSL + XML)
+   ----------------------------------------
+   One rule set shared by chat bubbles and the file viewer, so the two can
+   never drift apart. Colours come from the --syn-* variables, which are
+   redefined per theme in the :root blocks at the top of this file.
+   ======================================== */
+
+/* --- BSL --- */
+.msg .bubble code .tok-k,
+.file-viewer-content code .tok-k {                /* keywords */
+  color: var(--syn-keyword);
   font-weight: 600;
 }
-.msg .bubble code .tok-type {     /* 1C types/objects */
-  color: #4ec9b0;
+.msg .bubble code .tok-type,
+.file-viewer-content code .tok-type {             /* 1C types/objects */
+  color: var(--syn-type);
   font-weight: 500;
 }
-.msg .bubble code .tok-builtin {  /* built-in functions */
-  color: #dcdcaa;
+.msg .bubble code .tok-builtin,
+.file-viewer-content code .tok-builtin {          /* built-in functions */
+  color: var(--syn-builtin);
 }
-.msg .bubble code .tok-str {      /* strings */
-  color: #ce9178;
+.msg .bubble code .tok-str,
+.file-viewer-content code .tok-str {              /* strings */
+  color: var(--syn-string);
 }
-.msg .bubble code .tok-com {      /* comments */
-  color: #6a9955;
+.msg .bubble code .tok-com,
+.file-viewer-content code .tok-com {              /* comments */
+  color: var(--syn-comment);
   font-style: italic;
 }
-.msg .bubble code .tok-num {      /* numbers */
-  color: #b5cea8;
+.msg .bubble code .tok-num,
+.file-viewer-content code .tok-num {              /* numbers */
+  color: var(--syn-number);
 }
-.msg .bubble code .tok-attr {     /* attributes/directives like &НаКлиенте */
-  color: #c586c0;
+.msg .bubble code .tok-attr,
+.file-viewer-content code .tok-attr {             /* directives like &НаКлиенте */
+  color: var(--syn-attr);
   font-weight: 500;
 }
-.msg .bubble code .tok-preproc {  /* preprocessor directives like #Если */
-  color: #9b9b9b;
+.msg .bubble code .tok-preproc,
+.file-viewer-content code .tok-preproc {          /* preprocessor like #Если */
+  color: var(--syn-preproc);
   font-weight: 600;
 }
-.msg .bubble code .tok-op {       /* operators */
-  color: #d4d4d4;
+.msg .bubble code .tok-op,
+.file-viewer-content code .tok-op {               /* operators */
+  color: var(--syn-op);
 }
 
-/* XML syntax highlighting tokens */
-.msg .bubble code .tok-xml-decl {     /* <?xml version="1.0"?> */
-  color: #9b9b9b;
+/* --- XML --- */
+.msg .bubble code .tok-xml-decl,
+.file-viewer-content code .tok-xml-decl {         /* <?xml version="1.0"?> */
+  color: var(--syn-xml-decl);
   font-weight: 600;
 }
-.msg .bubble code .tok-xml-pi {       /* <?target data?> */
-  color: #9b9b9b;
+.msg .bubble code .tok-xml-pi,
+.file-viewer-content code .tok-xml-pi {           /* <?target data?> */
+  color: var(--syn-xml-pi);
   font-style: italic;
 }
-.msg .bubble code .tok-xml-tag {      /* <tag>, </tag>, <tag/> */
-  color: #4ec9b0;
+.msg .bubble code .tok-xml-tag,
+.file-viewer-content code .tok-xml-tag {          /* <tag>, </tag>, <tag/> */
+  color: var(--syn-xml-tag);
   font-weight: 600;
 }
-.msg .bubble code .tok-xml-attr {     /* attribute names */
-  color: #9cdcfe;
+.msg .bubble code .tok-xml-attr,
+.file-viewer-content code .tok-xml-attr {         /* attribute names */
+  color: var(--syn-xml-attr);
   font-weight: 400;
 }
-.msg .bubble code .tok-xml-val {      /* attribute="value" */
-  color: #ce9178;
+.msg .bubble code .tok-xml-val,
+.file-viewer-content code .tok-xml-val {          /* attribute="value" */
+  color: var(--syn-xml-val);
 }
-.msg .bubble code .tok-xml-entity {   /* &lt;, &amp;, &#123; */
-  color: #dcdcaa;
+.msg .bubble code .tok-xml-entity,
+.file-viewer-content code .tok-xml-entity {       /* &lt;, &amp;, &#123; */
+  color: var(--syn-xml-entity);
   font-weight: 500;
 }
-.msg .bubble code .tok-xml-cdata {    /* <![CDATA[...]]> */
-  color: #ce9178;
-  background: rgba(206, 145, 120, 0.1);
+.msg .bubble code .tok-xml-cdata,
+.file-viewer-content code .tok-xml-cdata {        /* <![CDATA[...]]> */
+  color: var(--syn-xml-cdata);
+  background: var(--syn-xml-cdata-bg);
 }
-.msg .bubble code .tok-xml-doctype {  /* <!DOCTYPE ...> */
-  color: #c586c0;
-  font-style: italic;
-}
-
-/* BSL syntax highlighting tokens in file viewer */
-.file-viewer-content code .tok-k {        /* keywords */
-  color: #ff6b9d;
-  font-weight: 600;
-}
-.file-viewer-content code .tok-type {     /* 1C types/objects */
-  color: #4ec9b0;
-  font-weight: 500;
-}
-.file-viewer-content code .tok-builtin {  /* built-in functions */
-  color: #dcdcaa;
-}
-.file-viewer-content code .tok-str {      /* strings */
-  color: #ce9178;
-}
-.file-viewer-content code .tok-com {      /* comments */
-  color: #6a9955;
-  font-style: italic;
-}
-.file-viewer-content code .tok-num {      /* numbers */
-  color: #b5cea8;
-}
-.file-viewer-content code .tok-attr {     /* attributes/directives like &НаКлиенте */
-  color: #c586c0;
-  font-weight: 500;
-}
-.file-viewer-content code .tok-preproc {  /* preprocessor directives like #Если */
-  color: #9b9b9b;
-  font-weight: 600;
-}
-.file-viewer-content code .tok-op {       /* operators */
-  color: #d4d4d4;
-}
-
-/* XML syntax highlighting tokens in file viewer */
-.file-viewer-content code .tok-xml-decl {     /* <?xml version="1.0"?> */
-  color: #9b9b9b;
-  font-weight: 600;
-}
-.file-viewer-content code .tok-xml-pi {       /* <?target data?> */
-  color: #9b9b9b;
-  font-style: italic;
-}
-.file-viewer-content code .tok-xml-tag {      /* <tag>, </tag>, <tag/> */
-  color: #4ec9b0;
-  font-weight: 600;
-}
-.file-viewer-content code .tok-xml-attr {     /* attribute names */
-  color: #9cdcfe;
-  font-weight: 400;
-}
-.file-viewer-content code .tok-xml-val {      /* attribute="value" */
-  color: #ce9178;
-}
-.file-viewer-content code .tok-xml-entity {   /* &lt;, &amp;, &#123; */
-  color: #dcdcaa;
-  font-weight: 500;
-}
-.file-viewer-content code .tok-xml-cdata {    /* <![CDATA[...]]> */
-  color: #ce9178;
-  background: rgba(206, 145, 120, 0.1);
-}
-.file-viewer-content code .tok-xml-doctype {  /* <!DOCTYPE ...> */
-  color: #c586c0;
+.msg .bubble code .tok-xml-doctype,
+.file-viewer-content code .tok-xml-doctype {      /* <!DOCTYPE ...> */
+  color: var(--syn-xml-doctype);
   font-style: italic;
 }
 
@@ -1171,7 +1353,7 @@ main > .composer {
 
 /* Comment block indicators - slightly different color */
 .fold-indicator[data-block-type="comment"] {
-  color: var(--comment-color, #6a9955);
+  color: var(--syn-comment);
   opacity: 0.8;
 }
 
@@ -1194,13 +1376,13 @@ main > .composer {
 
 /* Collapsed line styling */
 .fold-collapsed-line {
-  background: rgba(75, 163, 255, 0.05);
+  background: rgba(var(--accent-rgb), 0.05);
   border-left: 2px solid var(--accent);
   padding-left: 4px;
 }
 
 .fold-collapsed-line:hover {
-  background: rgba(75, 163, 255, 0.1);
+  background: rgba(var(--accent-rgb), 0.1);
 }
 
 /* Ellipsis indicator */
@@ -1260,8 +1442,9 @@ main > .composer {
   font-size: inherit;
   line-height: inherit;
   font-family: inherit;
-  color: var(--muted);
-  opacity: 0.45;
+  /* Per-theme colour rather than opacity: 0.45 of --muted is unreadable on a
+     light background. */
+  color: var(--gutter-fg);
   user-select: none;
   pointer-events: none;
 }
@@ -1282,17 +1465,17 @@ main > .composer {
   max-width: 100%;
   overflow-x: auto;
   display: block;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--border-medium);
   border-radius: 8px;
 }
 
 .msg .bubble table thead {
-  background: rgba(75, 163, 255, 0.1);
+  background: rgba(var(--accent-rgb), 0.1);
 }
 
 .msg .bubble table th,
 .msg .bubble table td {
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--border-medium);
   padding: 8px 12px;
   text-align: left;
 }
@@ -1300,19 +1483,19 @@ main > .composer {
 .msg .bubble table th {
   font-weight: 600;
   color: var(--accent);
-  background: rgba(75, 163, 255, 0.08);
+  background: rgba(var(--accent-rgb), 0.08);
 }
 
 .msg .bubble table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(var(--on-surface-rgb), 0.03);
 }
 
 .msg .bubble table tbody tr:nth-child(even) {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(var(--on-surface-rgb), 0.02);
 }
 
 .msg .bubble table tbody tr:nth-child(even):hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(var(--on-surface-rgb), 0.05);
 }
 
 /* Composer */
@@ -1322,7 +1505,7 @@ main > .composer {
   gap: 8px;
   padding: 12px 14px;
   background: var(--panel);
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid var(--border-soft);
 }
 
 .input-wrapper {
@@ -1330,7 +1513,7 @@ main > .composer {
   align-items: flex-end;
   gap: 8px;
   background: var(--panel-2);
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
   border-radius: 24px;
   padding: 8px 8px 8px 12px;
   transition: border-color 0.2s;
@@ -1362,7 +1545,7 @@ main > .composer {
 }
 
 #message-input::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.2);
+  background: rgba(var(--on-surface-rgb), 0.2);
   border-radius: 3px;
 }
 
@@ -1387,7 +1570,7 @@ main > .composer {
 }
 
 .attach-btn-left:hover {
-  background: rgba(255,255,255,0.05);
+  background: rgba(var(--on-surface-rgb), 0.05);
   color: var(--text);
 }
 
@@ -1404,13 +1587,13 @@ main > .composer {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(75, 163, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.3);
   transition: all 0.2s ease;
 }
 
 .send-btn-circle:hover:not(:disabled) {
   transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(75, 163, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.4);
 }
 
 .send-btn-circle:active:not(:disabled) {
@@ -1426,11 +1609,11 @@ main > .composer {
 /* Stop mode styling - red color when stop icon is visible */
 .send-btn-circle.stop-mode {
   background: var(--err);
-  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+  box-shadow: 0 2px 8px rgba(var(--err-rgb), 0.3);
 }
 
 .send-btn-circle.stop-mode:hover:not(:disabled) {
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+  box-shadow: 0 4px 12px rgba(var(--err-rgb), 0.4);
 }
 
 /* Footer status */
@@ -1441,7 +1624,7 @@ main > .composer {
   gap: 10px;
   padding: 8px 14px;
   background: var(--panel);
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid var(--border-soft);
   color: var(--muted);
   font-size: 12px;
 }
@@ -1481,7 +1664,7 @@ main > .composer {
 
 #session-label {
   padding-right: 20px;
-  border-right: 1px solid rgba(255,255,255,0.15);
+  border-right: 1px solid var(--border-strong);
 }
 
 #session-label code {
@@ -1495,7 +1678,7 @@ main > .composer {
   gap: 6px;
   font-weight: 500;
   padding-right: 20px;
-  border-right: 1px solid rgba(255,255,255,0.15);
+  border-right: 1px solid var(--border-strong);
 }
 
 #total-tokens {
@@ -1523,7 +1706,7 @@ main > .composer {
   width: 10px;
 }
 .chat::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.12);
+  background: var(--scrollbar-thumb);
   border-radius: 10px;
 }
 .chat::-webkit-scrollbar-track {
@@ -1571,8 +1754,8 @@ main > .composer {
   justify-content: center;
   font-size: 18px;
   flex-shrink: 0;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: var(--border-soft);
+  border: 1px solid var(--border);
 }
 
 /* Copy button */
@@ -1583,8 +1766,8 @@ main > .composer {
   width: 22px;
   height: 22px;
   padding: 0;
-  border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border-strong);
+  background: var(--border);
   color: var(--muted);
   border-radius: 4px;
   cursor: pointer;
@@ -1597,16 +1780,16 @@ main > .composer {
 }
 
 .copy-btn:hover {
-  background: rgba(255,255,255,0.15);
+  background: var(--border-strong);
   color: var(--text);
   transform: scale(1.05);
-  border-color: rgba(255,255,255,0.3);
+  border-color: rgba(var(--on-surface-rgb), 0.3);
 }
 
 .copy-btn.copied {
-  background: rgba(40, 167, 69, 0.2);
+  background: rgba(var(--ok-rgb), 0.2);
   color: var(--ok);
-  border-color: rgba(40, 167, 69, 0.4);
+  border-color: rgba(var(--ok-rgb), 0.4);
 }
 
 /* Token info button */
@@ -1617,8 +1800,8 @@ main > .composer {
   width: 22px;
   height: 22px;
   padding: 0;
-  border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border-strong);
+  background: var(--border);
   color: var(--muted);
   border-radius: 4px;
   cursor: pointer;
@@ -1631,10 +1814,10 @@ main > .composer {
 }
 
 .token-btn:hover {
-  background: rgba(255,255,255,0.15);
+  background: var(--border-strong);
   color: var(--text);
   transform: scale(1.05);
-  border-color: rgba(255,255,255,0.3);
+  border-color: rgba(var(--on-surface-rgb), 0.3);
 }
 
 /* Token tooltip */
@@ -1643,7 +1826,7 @@ main > .composer {
   bottom: 32px;
   right: 40px;
   background: var(--panel-2);
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid var(--border-strong);
   border-radius: 8px;
   padding: 10px 14px;
   color: var(--text);
@@ -1680,7 +1863,7 @@ main > .composer {
 
 .token-tooltip .token-separator {
   height: 1px;
-  background: rgba(255,255,255,0.1);
+  background: var(--hover);
   margin: 4px 0;
 }
 
@@ -1689,7 +1872,7 @@ main > .composer {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(255,255,255,0.2);
+  border: 2px solid rgba(var(--on-surface-rgb), 0.2);
   border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -1708,7 +1891,7 @@ main > .composer {
   margin-right: auto;
   padding: 10px 14px;
   background: var(--panel);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--border-soft);
   align-items: center;
   gap: 10px;
 }
@@ -1732,7 +1915,7 @@ main > .composer {
   padding: 6px 10px;
   border-radius: 6px;
   outline: none;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
   background: var(--panel-2);
   color: var(--text);
 }
@@ -1754,7 +1937,7 @@ main > .composer {
   width: 100%;
   height: 32px;
   padding: 5px 10px;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
   border-radius: 6px;
   outline: none;
   background: var(--panel-2);
@@ -1771,13 +1954,13 @@ main > .composer {
 }
 
 .search-role-filter-toggle:hover {
-  background: rgba(75, 163, 255, 0.08);
-  border-color: rgba(75, 163, 255, 0.55);
+  background: rgba(var(--accent-rgb), 0.08);
+  border-color: rgba(var(--accent-rgb), 0.55);
 }
 
 .search-role-filter-toggle:focus-visible,
 .search-role-filter-toggle[aria-expanded="true"] {
-  box-shadow: 0 0 0 2px rgba(75, 163, 255, 0.16);
+  box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.16);
 }
 
 .search-role-filter-chevron {
@@ -1802,10 +1985,10 @@ main > .composer {
   left: 0;
   right: 0;
   padding: 4px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid var(--hover);
   border-radius: 7px;
   background: var(--panel);
-  box-shadow: 0 10px 28px rgba(0,0,0,0.42);
+  box-shadow: 0 10px 28px rgba(var(--shadow-rgb), 0.42);
 }
 
 .search-role-filter-menu[hidden] {
@@ -1831,19 +2014,19 @@ main > .composer {
 
 .search-role-filter-option:hover,
 .search-role-filter-option:focus-visible {
-  background: rgba(75, 163, 255, 0.12);
+  background: rgba(var(--accent-rgb), 0.12);
   color: var(--text);
 }
 
 .search-role-filter-option[aria-selected="true"] {
-  background: rgba(75, 163, 255, 0.2);
+  background: rgba(var(--accent-rgb), 0.2);
   color: var(--text);
   font-weight: 600;
 }
 
 .search-role-filter-option[aria-selected="true"]:hover,
 .search-role-filter-option[aria-selected="true"]:focus-visible {
-  background: rgba(75, 163, 255, 0.28);
+  background: rgba(var(--accent-rgb), 0.28);
 }
 
 .search-controls {
@@ -1867,7 +2050,7 @@ main > .composer {
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid var(--hover);
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -1899,21 +2082,21 @@ main > .composer {
 }
 
 .search-close-btn:hover {
-  background: rgba(255, 107, 107, 0.2);
-  border-color: rgba(255, 107, 107, 0.3);
+  background: rgba(var(--err-rgb), 0.2);
+  border-color: rgba(var(--err-rgb), 0.3);
   color: var(--err);
 }
 
 /* Highlight search matches */
 .msg .bubble .highlight {
-  background: rgba(255, 215, 0, 0.3);
+  background: var(--chat-hl-bg);
   padding: 2px 4px;
   border-radius: 3px;
 }
 
 .msg .bubble .highlight.current {
-  background: rgba(255, 165, 0, 0.55);
-  box-shadow: 0 0 0 1px rgba(255, 165, 0, 0.8);
+  background: var(--chat-hl-current-bg);
+  box-shadow: 0 0 0 1px var(--hl-current-ring);
 }
 
 .chat.search-role-user .msg.assistant,
@@ -1928,7 +2111,7 @@ main > .composer {
 
 .topbar button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(var(--shadow-rgb), 0.15);
 }
 
 /* Responsive */
@@ -1991,7 +2174,7 @@ main > .composer {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(var(--shadow-rgb), 0.5);
     z-index: 999;
   }
 
@@ -2027,7 +2210,7 @@ main > .composer {
 }
 
 .conversations-list::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.12);
+  background: var(--scrollbar-thumb);
   border-radius: 8px;
 }
 
@@ -2039,9 +2222,9 @@ main > .composer {
 .format-menu {
   position: fixed;
   background: var(--panel);
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid var(--border-strong);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(var(--shadow-rgb), 0.3);
   padding: 6px;
   z-index: 2000;
   display: flex;
@@ -2073,16 +2256,16 @@ main > .composer {
 }
 
 .format-btn:hover {
-  background: rgba(75, 163, 255, 0.15);
+  background: rgba(var(--accent-rgb), 0.15);
   color: var(--accent);
 }
 
 .format-btn:active {
-  background: rgba(75, 163, 255, 0.25);
+  background: rgba(var(--accent-rgb), 0.25);
 }
 
 .format-btn.suggested {
-  background: rgba(75, 163, 255, 0.1);
+  background: rgba(var(--accent-rgb), 0.1);
   border-left-color: var(--accent);
 }
 
@@ -2100,7 +2283,7 @@ main > .composer {
   color: white;
   padding: 12px 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(var(--shadow-rgb), 0.3);
   font-size: 13px;
   font-weight: 500;
   opacity: 0;
@@ -2121,9 +2304,9 @@ main > .composer {
   flex-wrap: wrap;
   gap: 8px;
   padding: 10px;
-  background: rgba(255,255,255,0.02);
+  background: rgba(var(--on-surface-rgb), 0.02);
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid var(--border-soft);
 }
 
 .attached-files.has-files {
@@ -2137,7 +2320,7 @@ main > .composer {
   gap: 6px;
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid var(--hover);
 }
 
 .message-file-item {
@@ -2145,7 +2328,7 @@ main > .composer {
   align-items: center;
   gap: 8px;
   padding: 6px 8px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(var(--on-surface-rgb), 0.05);
   border-radius: 6px;
   font-size: 12px;
   border: 1px solid transparent;
@@ -2153,8 +2336,8 @@ main > .composer {
 }
 
 .message-file-item.clickable:hover {
-  background: rgba(75, 163, 255, 0.15);
-  border-color: rgba(75, 163, 255, 0.3);
+  background: rgba(var(--accent-rgb), 0.15);
+  border-color: rgba(var(--accent-rgb), 0.3);
 }
 
 .message-file-icon {
@@ -2193,12 +2376,12 @@ main > .composer {
 }
 
 .message-file-view:hover {
-  background: rgba(75, 163, 255, 0.15);
+  background: rgba(var(--accent-rgb), 0.15);
   color: var(--accent);
 }
 
 .message-file-download:hover {
-  background: rgba(40, 167, 69, 0.15);
+  background: rgba(var(--ok-rgb), 0.15);
   color: var(--ok);
 }
 
@@ -2208,7 +2391,7 @@ main > .composer {
   gap: 6px;
   padding: 4px 10px;
   background: var(--panel);
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
   border-radius: 6px;
   font-size: 12px;
   font-weight: 500;
@@ -2243,7 +2426,7 @@ main > .composer {
   gap: 8px;
   padding: 6px 10px;
   background: var(--panel);
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
   border-radius: 6px;
   font-size: 13px;
   transition: all 0.2s ease;
@@ -2295,7 +2478,7 @@ main > .composer {
   min-width: 0;
   overflow: hidden;
   background: var(--panel);
-  border-left: 1px solid rgba(255,255,255,0.06);
+  border-left: 1px solid var(--border-soft);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -2314,7 +2497,7 @@ main > .composer {
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--border-soft);
   background: var(--panel-2);
 }
 
@@ -2344,7 +2527,7 @@ main > .composer {
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
   background: transparent;
   color: var(--muted);
   border-radius: 6px;
@@ -2358,9 +2541,9 @@ main > .composer {
 }
 
 .close-file-viewer-btn:hover {
-  background: rgba(255, 107, 107, 0.2);
+  background: rgba(var(--err-rgb), 0.2);
   color: var(--err);
-  border-color: rgba(255, 107, 107, 0.3);
+  border-color: rgba(var(--err-rgb), 0.3);
 }
 
 .file-viewer-toolbar {
@@ -2368,7 +2551,7 @@ main > .composer {
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--border-soft);
   background: var(--panel);
   flex-wrap: wrap;
 }
@@ -2376,7 +2559,7 @@ main > .composer {
 .file-viewer-btn {
   padding: 6px 12px;
   border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
   background: var(--panel-2);
   color: var(--text);
   cursor: pointer;
@@ -2409,7 +2592,7 @@ main > .composer {
   font-size: 11px;
   color: var(--muted);
   padding: 4px 8px;
-  background: rgba(255,255,255,0.03);
+  background: rgba(var(--on-surface-rgb), 0.03);
   border-radius: 4px;
 }
 
@@ -2445,7 +2628,8 @@ main > .composer {
 .file-viewer-content pre {
   margin: 0;
   padding: var(--viewer-code-padding);
-  background: rgba(255,255,255,0.04);
+  background: var(--code-bg);
+  box-shadow: inset 0 0 0 1px var(--code-border);
   border-radius: 8px;
   overflow-x: auto;
   /* font-family / font-size / line-height / color inherited from .code-container */
@@ -2473,7 +2657,7 @@ main > .composer {
 }
 
 .file-viewer-content::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.12);
+  background: var(--scrollbar-thumb);
   border-radius: 10px;
 }
 
@@ -2488,7 +2672,7 @@ main > .composer {
   gap: 8px;
   padding: 10px 16px;
   background: var(--panel-2);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--border-soft);
   animation: slideDown 0.2s ease-out;
 }
 
@@ -2511,7 +2695,7 @@ main > .composer {
   flex: 1;
   padding: 6px 12px;
   background: var(--panel);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid var(--hover);
   border-radius: 6px;
   color: var(--text);
   font-size: 13px;
@@ -2552,7 +2736,7 @@ main > .composer {
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid var(--hover);
   background: var(--panel);
   color: var(--text);
   border-radius: 6px;
@@ -2579,7 +2763,7 @@ main > .composer {
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
   background: transparent;
   color: var(--muted);
   border-radius: 6px;
@@ -2592,35 +2776,35 @@ main > .composer {
 }
 
 .file-search-close-btn:hover {
-  background: rgba(255, 107, 107, 0.2);
+  background: rgba(var(--err-rgb), 0.2);
   color: var(--err);
-  border-color: rgba(255, 107, 107, 0.3);
+  border-color: rgba(var(--err-rgb), 0.3);
 }
 
 /* Search highlights in file viewer - CSS Custom Highlight API */
 /* Modern browsers (Chrome, Edge, Safari, Firefox 140+) */
 ::highlight(search-results) {
-  background-color: rgba(255, 255, 0, 0.3);
+  background-color: var(--search-hl-bg);
   color: inherit;
 }
 
 ::highlight(search-current) {
-  background-color: rgba(255, 165, 0, 0.5);
+  background-color: var(--search-hl-current-bg);
   color: inherit;
 }
 
 /* Fallback for browsers without CSS Custom Highlight API support */
 .file-viewer-content .search-highlight {
-  background: rgba(255, 255, 0, 0.3);
+  background: var(--search-hl-bg);
   border-radius: 2px;
   padding: 0 2px;
 }
 
 .file-viewer-content .search-highlight-current {
-  background: rgba(255, 165, 0, 0.5);
+  background: var(--search-hl-current-bg);
   border-radius: 2px;
   padding: 0 2px;
-  box-shadow: 0 0 0 1px rgba(255, 165, 0, 0.8);
+  box-shadow: 0 0 0 1px var(--hl-current-ring);
 }
 
 /* Mobile styles for file viewer */
@@ -2649,7 +2833,7 @@ main > .composer {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(var(--shadow-rgb), 0.5);
     z-index: 1000;
   }
 
@@ -2663,12 +2847,12 @@ main > .composer {
    ======================================== */
 
 .mermaid {
-  background: #1e1e1e;
+  background: var(--mermaid-bg);
   padding: 1.5rem;
   border-radius: 8px;
   margin: 1rem 0;
   overflow: auto;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--hover);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -2688,8 +2872,8 @@ main > .composer {
 }
 
 .mermaid .edgeLabel {
-  background-color: #252526 !important;
-  color: #e4e4e4 !important;
+  background-color: var(--mermaid-edge-label-bg) !important;
+  color: var(--mermaid-edge-label-fg) !important;
 }
 
 /* Error display for failed mermaid diagrams */
@@ -2715,15 +2899,52 @@ main > .composer {
   opacity: 1;
 }
 
+/* Overlay buttons on code blocks and mermaid diagrams.
+   These used to be styled through inline style attributes emitted by
+   markdown.js, which no theme could override. The base styling now lives
+   here so it follows the active theme. */
+.code-copy-btn,
+.mermaid-fullscreen-btn,
+.mermaid-save-btn,
+.mermaid-copy-btn,
+.mermaid-fix-btn {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(var(--on-surface-rgb), 0.18);
+  background: var(--border-soft);
+  color: inherit;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+  opacity: 0.85;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.mermaid-fullscreen-btn {
+  font-size: 14px;
+}
+
+.mermaid-fix-btn {
+  background: rgba(var(--warn-rgb), 0.15);
+}
+
+.code-copy-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  z-index: 1;
+}
+
 .mermaid-zoom-in-btn:hover,
 .mermaid-zoom-out-btn:hover,
 .mermaid-fullscreen-btn:hover,
 .mermaid-save-btn:hover,
 .mermaid-copy-btn:hover,
-.mermaid-fix-btn:hover {
-  background: rgba(255, 255, 255, 0.15) !important;
-  opacity: 1 !important;
-  border-color: rgba(255, 255, 255, 0.3) !important;
+.mermaid-fix-btn:hover,
+.code-copy-btn:hover {
+  background: var(--border-strong);
+  opacity: 1;
+  border-color: rgba(var(--on-surface-rgb), 0.3);
   transform: translateY(-1px);
 }
 
@@ -2732,7 +2953,8 @@ main > .composer {
 .mermaid-fullscreen-btn:active,
 .mermaid-save-btn:active,
 .mermaid-copy-btn:active,
-.mermaid-fix-btn:active {
+.mermaid-fix-btn:active,
+.code-copy-btn:active {
   transform: translateY(0);
 }
 
@@ -2755,15 +2977,15 @@ main > .composer {
 }
 
 .mermaid-fullscreen-controls button:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border-color: rgba(255, 255, 255, 0.5) !important;
+  background: rgba(var(--on-surface-rgb), 0.2) !important;
+  border-color: rgba(var(--on-surface-rgb), 0.5) !important;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 8px rgba(var(--shadow-rgb), 0.3);
 }
 
 .mermaid-fullscreen-controls button:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(var(--shadow-rgb), 0.3);
 }
 
 .mermaid-fullscreen-diagram {
@@ -2783,28 +3005,28 @@ main > .composer {
 
 .mermaid-content::-webkit-scrollbar-track,
 .mermaid-fullscreen-diagram::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(var(--on-surface-rgb), 0.05);
   border-radius: 4px;
 }
 
 .mermaid-content::-webkit-scrollbar-thumb,
 .mermaid-fullscreen-diagram::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(var(--on-surface-rgb), 0.2);
   border-radius: 4px;
 }
 
 .mermaid-content::-webkit-scrollbar-thumb:hover,
 .mermaid-fullscreen-diagram::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(var(--on-surface-rgb), 0.3);
 }
 
 
 /* ===================== Reasoning Block ===================== */
 .reasoning-block {
   margin-bottom: 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(var(--on-surface-rgb), 0.09);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.025);
+  background: rgba(var(--on-surface-rgb), 0.025);
   overflow: hidden;
 }
 
@@ -2838,19 +3060,19 @@ main > .composer {
 }
 
 .reasoning-block summary:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-inset);
 }
 
 .reasoning-block .reasoning-content {
   padding: 8px 14px 10px;
   font-size: 0.78rem;
   line-height: 1.5;
-  color: rgba(170, 178, 192, 0.85);
+  color: var(--tool-meta-fg);
   white-space: pre-wrap;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
   max-height: 280px;
   overflow-y: auto;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--border-soft);
   word-break: break-word;
 }
 
@@ -2863,16 +3085,16 @@ main > .composer {
 }
 
 .reasoning-block .reasoning-content::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--border-strong);
   border-radius: 4px;
 }
 
 /* ===================== Tool Call Blocks ===================== */
 .tool-call-block {
   margin-bottom: 0.75rem;
-  border: 1px solid rgba(75, 163, 255, 0.15);
+  border: 1px solid rgba(var(--accent-rgb), 0.15);
   border-radius: 8px;
-  background: rgba(75, 163, 255, 0.03);
+  background: rgba(var(--accent-rgb), 0.03);
   overflow: hidden;
 }
 
@@ -2880,7 +3102,7 @@ main > .composer {
   padding: 6px 12px;
   cursor: pointer;
   font-size: 0.8rem;
-  color: rgba(100, 180, 255, 0.85);
+  color: var(--tool-name-fg);
   user-select: none;
   list-style: none;
   display: flex;
@@ -2906,15 +3128,15 @@ main > .composer {
 }
 
 .tool-call-block summary:hover {
-  background: rgba(75, 163, 255, 0.06);
+  background: rgba(var(--accent-rgb), 0.06);
 }
 
 .tool-call-block .tool-request {
   padding: 6px 14px 8px;
   font-size: 0.78rem;
   line-height: 1.5;
-  color: rgba(170, 178, 192, 0.75);
-  border-top: 1px solid rgba(75, 163, 255, 0.08);
+  color: var(--tool-args-fg);
+  border-top: 1px solid rgba(var(--accent-rgb), 0.08);
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -2945,15 +3167,15 @@ main > .composer {
   font-size: 0.78rem;
   color: var(--muted);
   font-style: italic;
-  border-top: 1px solid rgba(75, 163, 255, 0.06);
+  border-top: 1px solid rgba(var(--accent-rgb), 0.06);
 }
 
 .tool-call-block .tool-result {
   padding: 6px 14px 8px;
   font-size: 0.78rem;
   line-height: 1.5;
-  color: rgba(150, 210, 150, 0.85);
-  border-top: 1px solid rgba(75, 163, 255, 0.08);
+  color: var(--tool-result-fg);
+  border-top: 1px solid rgba(var(--accent-rgb), 0.08);
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -2965,8 +3187,8 @@ main > .composer {
   padding: 8px 14px 10px;
   font-size: 0.79rem;
   line-height: 1.55;
-  color: rgba(214, 222, 235, 0.9);
-  border-top: 1px dashed rgba(75, 163, 255, 0.12);
+  color: var(--tool-followup-fg);
+  border-top: 1px dashed rgba(var(--accent-rgb), 0.12);
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -2978,23 +3200,23 @@ main > .composer {
 .tool-call-block .tool-result a,
 .tool-call-block .tool-followup a,
 .tool-result-details-list a {
-  color: #8fc6ff;
+  color: var(--link);
   text-decoration: none;
-  border-bottom: 1px dotted rgba(143, 198, 255, 0.6);
+  border-bottom: 1px dotted var(--link-underline);
 }
 
 .tool-call-block .tool-request a:hover,
 .tool-call-block .tool-result a:hover,
 .tool-call-block .tool-followup a:hover,
 .tool-result-details-list a:hover {
-  color: #b6ddff;
+  color: var(--link-hover);
   text-decoration: underline;
 }
 
 /* Вложенный список подробностей */
 .tool-result-details {
   margin: 4px 14px 8px;
-  border: 1px solid rgba(75, 163, 255, 0.1);
+  border: 1px solid rgba(var(--accent-rgb), 0.1);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -3011,6 +3233,6 @@ main > .composer {
   margin: 0;
   padding: 4px 10px 6px 28px;
   font-size: 0.75rem;
-  color: rgba(170, 178, 192, 0.7);
+  color: var(--tool-details-fg);
   line-height: 1.6;
 }
